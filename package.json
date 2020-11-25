@@ -5,7 +5,7 @@
 	"version": "0.0.2",
 	"publisher": "fofolee",
 	"engines": {
-		"vscode": "^1.30.0"
+		"vscode": "^1.51.0"
 	},
 	"categories": [
 		"Other"
@@ -38,7 +38,8 @@
 	],
 	"main": "./extension.js",
 	"contributes": {
-		"commands": [{
+		"commands": [
+			{
 				"command": "crypto.EncodeDecode",
 				"title": "Encoding and Decoding",
 				"category": "🔐Crypto"
@@ -65,7 +66,8 @@
 			}
 		],
 		"menus": {
-			"editor/context": [{
+			"editor/context": [
+				{
 					"when": "editorHasSelection",
 					"command": "crypto.EncodeDecode",
 					"group": "7_modification"
@@ -74,53 +76,66 @@
 					"when": "editorHasSelection",
 					"command": "crypto.EncryptDecrypt",
 					"group": "7_modification"
-				}, {
+				},
+				{
 					"when": "editorHasSelection",
 					"command": "crypto.textManipulation",
 					"group": "7_modification"
 				}
 			]
 		},
-		"keybindings": [{
-			"command": "crypto.EncodeDecode",
-			"key": "ctrl+alt+d",
-			"when": "editorHasSelection"
-		}, {
-			"command": "crypto.EncryptDecrypt",
-			"key": "ctrl+alt+a",
-			"when": "editorHasSelection"
-		}, {
-			"command": "crypto.textManipulation",
-			"key": "ctrl+alt+t",
-			"when": "editorHasSelection"
-		},
-		{
-			"command": "crypto.hexadecimalCalculator",
-			"key": "ctrl+alt+c"
-		}
-	],
-		"languages": [{
-			"id": "crypto-output",
-			"mimetypes": [
-				"text/x-code-output"
-			]
-		}],
-		"grammars": [{
-			"language": "crypto-output",
-			"scopeName": "crypto.output",
-			"path": "./syntaxes/crypto-tools-output.tmLanguage"
-		}]
+		"keybindings": [
+			{
+				"command": "crypto.EncodeDecode",
+				"key": "ctrl+alt+d",
+				"when": "editorHasSelection"
+			},
+			{
+				"command": "crypto.EncryptDecrypt",
+				"key": "ctrl+alt+a",
+				"when": "editorHasSelection"
+			},
+			{
+				"command": "crypto.textManipulation",
+				"key": "ctrl+alt+t",
+				"when": "editorHasSelection"
+			},
+			{
+				"command": "crypto.hexadecimalCalculator",
+				"key": "ctrl+alt+c"
+			}
+		],
+		"languages": [
+			{
+				"id": "crypto-output",
+				"mimetypes": [
+					"text/x-code-output"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "crypto-output",
+				"scopeName": "crypto.output",
+				"path": "./syntaxes/crypto-tools-output.tmLanguage"
+			}
+		]
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "node ./test/runTest.js"
 	},
 	"devDependencies": {
-		"typescript": "^3.1.4",
-		"vscode": "^1.1.25",
-		"eslint": "^4.11.0",
-		"@types/node": "^8.10.25",
-		"@types/mocha": "^2.2.42"
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^14.14.10",
+		"@types/vscode": "^1.51.0",
+		"eslint": "^7.14.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"typescript": "^4.1.2",
+		"vscode-test": "^1.4.1"
 	},
 	"dependencies": {
 		"bubble_babble": "^0.2.0",
@@ -130,6 +145,6 @@
 		"safer-buffer": "^2.1.2",
 		"urlencode": "^1.1.0",
 		"utf8": "^3.0.0",
-		"xmorse": "0.0.4"
+		"xmorse": "^1.0.0"
 	}
 }
