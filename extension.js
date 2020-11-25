@@ -388,6 +388,11 @@ exports.activate = context => {
 				target: basic.sha512Hash
 			},
 			{
+				label: "SHA256",
+				detail: "SHA256哈希算法",
+				target: basic.sha256Hash
+			},
+			{
 				label: "Url Decode",
 				detail: "url加密",
 				target: basic.urlDecode

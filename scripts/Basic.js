@@ -97,6 +97,11 @@ exports.sha512Hash = function (str) {
   return hash.update(str).digest('hex')
 }
 
+exports.sha256Hash = function (str) {
+  let hash = crypto.createHash('sha256');
+  return hash.update(str).digest('hex')
+}
+
 exports.urlEncode = function (str) {
   return urlencode(str)
 }
