@@ -47,7 +47,7 @@ function Vigenere(strIn, key, encode) {
 //     $("plaintext").value = Vigenere(ciphertext, key, false);
 // }
 
-function deVigenereAuto(ciphertext,best_len,minLen,maxLen) {
+function deVigenereAuto(ciphertext, best_len, minLen, maxLen) {
     // console.log("autokey");
     // var ciphertext = $("ciphertext").value;
     // var best_len = parseInt($("keyLen").value);
@@ -104,7 +104,7 @@ function deVigenereAuto(ciphertext,best_len,minLen,maxLen) {
     // $("plaintext").value = Vigenere(ciphertext, best_key, false);
     console.log(best_key);
     var plaintext = Vigenere(ciphertext, best_key, false);
-    return [plaintext,best_key,best_len]
+    return [plaintext, best_key, best_len];
 }
 
 // window.onload = function(argument) {
@@ -113,5 +113,5 @@ function deVigenereAuto(ciphertext,best_len,minLen,maxLen) {
 //     $("decryption2").onclick = deVigenereAuto;
 // }
 
-exports.Vigenere = Vigenere
-exports.deVigenereAuto = deVigenereAuto
+exports.Vigenere = Vigenere;
+exports.deVigenereAuto = deVigenereAuto;

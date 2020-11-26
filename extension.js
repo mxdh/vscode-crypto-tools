@@ -6,8 +6,8 @@ const morse = require('xmorse');
 const basic = require('./scripts/Basic');
 const manip = require('./scripts/textManipulation');
 const crypto = require('crypto');
-const fs = require('fs')
-const fence = require('./scripts/Fence')
+const fs = require('fs');
+const fence = require('./scripts/Fence');
 
 /**
  * 插件被激活时触发，所有代码总入口
@@ -18,7 +18,7 @@ const fence = require('./scripts/Fence')
 String.prototype.format = function () {
 	var args = arguments;
 	return this.replace(/\{(\d+)\}/gm, (ms, p1) => {
-		return typeof (args[p1]) == 'undefined' ? ms : args[p1]
+		return typeof (args[p1]) == 'undefined' ? ms : args[p1];
 	});
 }
 
@@ -31,7 +31,7 @@ function print(text) {
 function showUpdate(alg, before, after, update) {
 	if (after) {
 		//output
-		print("------------------------------------")
+		print("------------------------------------");
 		print("  ◆   " + alg + ":");
 		print('[ ⇐ ] ' + before);
 		print('[ ⇒ ] ' + after);
@@ -44,7 +44,7 @@ function showUpdate(alg, before, after, update) {
 		}
 		print("------------------------------------");
 	} else {
-		vscode.window.showErrorMessage("转换失败！请检查文本类型或查看日志！")
+		vscode.window.showErrorMessage("转换失败！请检查文本类型或查看日志！");
 	}
 }
 
@@ -54,8 +54,8 @@ function crackHash(text) {
 	vscode.window.showInformationMessage("请确保网络和Python环境正常，正在破解中···");
 	system('python {0}/scripts/HashBuster.py -s {1}'.format(__dirname, text), (err, stdout) => {
 		if (stdout.indexOf("[-]") == -1) {
-			let hashtype = stdout.split('\n')[0].split('[!]')[1].trim()
-			let plaintext = stdout.split('\n')[1].trim()
+			let hashtype = stdout.split('\n')[0].split('[!]')[1].trim();
+			let plaintext = stdout.split('\n')[1].trim();
 			vscode.window.showInformationMessage(hashtype);
 			showUpdate("hashBuster", text, plaintext, true);
 		} else {
@@ -78,7 +78,7 @@ function crackHashInFile() {
 	vscode.window.showInformationMessage("请确保网络和Python环境正常，正在破解中···");
 	system('python {0}/scripts/HashBuster.py -f {1}'.format(__dirname, file), (err, stdout) => {
 		print("------------------------------------");
-		print(stdout)
+		print(stdout);
 		print("------------------------------------");
 		if (err) {
 			print('[ ✘ ] ' + err);
@@ -120,14 +120,14 @@ async function Shift(text) {
 }
 //栅栏
 async function Fence(text, alg) {
-	let result = []
+	let result = [];
 	if (alg.includes("Encode")) {
 		for (var i = 2; i < text.length; i++) {
-			result.push(fence.encrypt(text, i))
+			result.push(fence.encrypt(text, i));
 		}
 	} else {
 		for (var i = 2; i < text.length; i++) {
-			result.push(fence.decrypt(text, i))
+			result.push(fence.decrypt(text, i));
 		}
 	}
 	console.log(result);
@@ -186,7 +186,7 @@ async function symmetricCryption(text, alg) {
 		});
 		let key = value.split(',')[0] || "";
 		let iv = value.split(',')[1] || "";
-		print("Key: " + key + " IV: " + iv)
+		print("Key: " + key + " IV: " + iv);
 		try {
 			if (alg.includes("Encryption")) {
 				if (iv) {
@@ -206,7 +206,7 @@ async function symmetricCryption(text, alg) {
 				result += decipher.final('utf8');
 			}
 		} catch (err) {
-			print('[ ✘ ] ' + err)
+			print('[ ✘ ] ' + err);
 		}
 		showUpdate(alg + " - " + algorithm, text, result, true);
 	}
@@ -215,13 +215,13 @@ async function symmetricCryption(text, alg) {
 //RSA加密
 function checkKey(keyfile, key) {
 	let pri = [crypto.privateEncrypt, crypto.privateDecrypt];
-	let pub = [crypto.publicEncrypt, crypto.publicDecrypt]
+	let pub = [crypto.publicEncrypt, crypto.publicDecrypt];
 	if (key.includes("PRIVATE")) {
-		print("选择了私钥文件: " + keyfile)
-		return pri
+		print("选择了私钥文件: " + keyfile);
+		return pri;
 	} else if (key.includes("PUBLIC")) {
-		print("选择了公钥文件: " + keyfile)
-		return pub
+		print("选择了公钥文件: " + keyfile);
+		return pub;
 	} else {
 		print("[ ✘ ] 秘钥格式似乎不对");
 		print("私钥的开头和结尾分别为:");
@@ -240,7 +240,7 @@ async function rsaCryption(text, alg) {
 		});
 		if (file) {
 			let keyfile = file[0].fsPath;
-			let key = fs.readFileSync(keyfile).toString('utf-8')
+			let key = fs.readFileSync(keyfile).toString('utf-8');
 			if (alg.includes("Encryption")) {
 				crypt = checkKey(keyfile, key)[0];
 				var result = crypt(key, new Buffer(text)).toString('base64');
@@ -251,7 +251,7 @@ async function rsaCryption(text, alg) {
 			showUpdate(alg, text, result, true);
 		}
 	} catch (err) {
-		print(err)
+		print(err);
 	}
 }
 
@@ -268,7 +268,7 @@ async function Morse(text, alg) {
 		} else {
 			var result = morse.decode(text, option);
 		}
-		showUpdate(alg, text, result, true)
+		showUpdate(alg, text, result, true);
 	};
 }
 
@@ -276,30 +276,30 @@ async function Morse(text, alg) {
 async function calculator(text) {
 	let value = await vscode.window.showInputBox({
 		placeHolder: '输入要计算的公式，非十进制数以0x、0b、0o开头',
-		value:text
+		value: text
 	});
 	if (value) {
 		try {
-			let result = eval(value)
+			let result = eval(value);
 			let dec = parseFloat(result);
 			let hex = "0x" + dec.toString(16);
 			let oct = "0o" + dec.toString(8);
 			let bin = "0b" + dec.toString(2);
-			let str = /^[\x20-\x7e]+$/.test(basic.number2string(dec)) && basic.number2string(dec)
+			let str = /^[\x20-\x7e]+$/.test(basic.number2string(dec)) && basic.number2string(dec);
 			log = `dec: {0}
 			hex: {1}
 			bin: {2}
 			oct: {3}`.format(dec, hex, bin, oct);
 			if (str) {
-				log += '\n			str: "{0}"'.format(str)
+				log += '\n			str: "{0}"'.format(str);
 			}
 			showUpdate("hexadecimalConverter", value, log, false);
 		}
 		catch (err) {
-			vscode.window.showErrorMessage("输入非公式，将先转换成十六进制再计算")
+			vscode.window.showErrorMessage("输入非公式，将先转换成十六进制再计算");
 			let hex = '0x' + basic.string2hex(value);
 			calculator(hex);
-			}
+		}
 	}
 }
 
@@ -308,7 +308,7 @@ async function calculator(text) {
 function getPatterns(file) {
 	let content = fs.readFileSync(file, "utf-8");
 	let patterns = /<key>patterns<\/key>[\s|\S]*?<array>([\s|\S]*?)<\/array>/.exec(content)[1];
-	return patterns
+	return patterns;
 }
 
 //去除相关插件JSON文件里的"text/x-code-output"，以免冲突
@@ -321,7 +321,7 @@ function rmOutput(file) {
 //获取定义了output channel语法的文件，并整合语法
 function getLang() {
 	let lang = '';
-	const extension = vscode.extensions.all
+	const extension = vscode.extensions.all;
 	for (let e of extension) {
 		try {
 			let mimetypes = e.packageJSON.contributes.languages[0].mimetypes;
@@ -340,7 +340,7 @@ function getLang() {
 		} catch (err) {
 		}
 	}
-	return lang
+	return lang;
 }
 
 
@@ -353,120 +353,120 @@ exports.activate = context => {
 		selection = editor.selection;
 		let text = editor.document.getText(selection).trim();
 		let algorithm = await vscode.window.showQuickPick([{
-				label: "ROT13",
-				detail: "ROT13加密",
-				target: basic.rot13
-			},
-			{
-				label: "Base64/32/16 Decode",
-				detail: "自动进行base64/32/16解密",
-				target: basic.baseDecode
-			},
-			{
-				label: "Base64 Encode",
-				detail: "base64加密",
-				target: basic.base64Encode
-			},
-			{
-				label: "Base32 Encode",
-				detail: "base32加密",
-				target: basic.base32Encode
-			},
-			{
-				label: "Base16 Encode",
-				detail: "base16加密",
-				target: basic.base16Encode
-			},
-			{
-				label: "MD5",
-				detail: "MD5哈希算法",
-				target: basic.md5Hash
-			},
-			{
-				label: "SHA512",
-				detail: "SHA512哈希算法",
-				target: basic.sha512Hash
-			},
-			{
-				label: "SHA256",
-				detail: "SHA256哈希算法",
-				target: basic.sha256Hash
-			},
-			{
-				label: "Url Decode",
-				detail: "url加密",
-				target: basic.urlDecode
-			},
-			{
-				label: "Url Encode",
-				detail: "url解密",
-				target: basic.urlEncode
-			},
-			{
-				label: "Html Entities",
-				detail: "html加密",
-				target: basic.htmlEncode
-			},
-			{
-				label: "Html Entity Decode",
-				detail: "html解密",
-				target: basic.htmlDecode
-			},
-			{
-				label: "Quote-Printable Decode",
-				detail: "Quote-Printable解密",
-				target: basic.quopriDecode
-			},
-			{
-				label: "Quote-Printable Encode",
-				detail: "Quote-Printable加密",
-				target: basic.quopriEncode
-			},
-			{
-				label: "Bubble Babble Decode",
-				detail: "Bubble Babble 解密",
-				target: basic.bubbleDecode
-			},
-			{
-				label: "Bubble Babble Encode",
-				detail: "Bubble Babble 加密",
-				target: basic.bubbleEncode
-			},
-			{
-				label: "Brainfuck Decode",
-				detail: "Brainfuck 解密",
-				target: basic.brainfuckDecode
-			},
-			{
-				label: "Number To String",
-				detail: "整型转字符",
-				target: basic.number2string
-			},
-			{
-				label: "String To Number",
-				detail: "字符转整型",
-				target: basic.string2number
-			},
-			{
-				label: "String To Hex",
-				detail: "字符转十六进制",
-				target: basic.string2hex
-			},
-			{
-				label: "Hex To String",
-				detail: "十六进制转字符",
-				target: basic.hex2string
-			},
-			{
-				label: "String To Bin",
-				detail: "字符转二进制",
-				target: basic.string2bin
-			},
-			{
-				label: "Bin To String",
-				detail: "二进制转字符",
-				target: basic.bin2string
-			}
+			label: "ROT13",
+			detail: "ROT13加密",
+			target: basic.rot13
+		},
+		{
+			label: "Base64/32/16 Decode",
+			detail: "自动进行base64/32/16解密",
+			target: basic.baseDecode
+		},
+		{
+			label: "Base64 Encode",
+			detail: "base64加密",
+			target: basic.base64Encode
+		},
+		{
+			label: "Base32 Encode",
+			detail: "base32加密",
+			target: basic.base32Encode
+		},
+		{
+			label: "Base16 Encode",
+			detail: "base16加密",
+			target: basic.base16Encode
+		},
+		{
+			label: "MD5",
+			detail: "MD5哈希算法",
+			target: basic.md5Hash
+		},
+		{
+			label: "SHA512",
+			detail: "SHA512哈希算法",
+			target: basic.sha512Hash
+		},
+		{
+			label: "SHA256",
+			detail: "SHA256哈希算法",
+			target: basic.sha256Hash
+		},
+		{
+			label: "Url Decode",
+			detail: "url加密",
+			target: basic.urlDecode
+		},
+		{
+			label: "Url Encode",
+			detail: "url解密",
+			target: basic.urlEncode
+		},
+		{
+			label: "Html Entities",
+			detail: "html加密",
+			target: basic.htmlEncode
+		},
+		{
+			label: "Html Entity Decode",
+			detail: "html解密",
+			target: basic.htmlDecode
+		},
+		{
+			label: "Quote-Printable Decode",
+			detail: "Quote-Printable解密",
+			target: basic.quopriDecode
+		},
+		{
+			label: "Quote-Printable Encode",
+			detail: "Quote-Printable加密",
+			target: basic.quopriEncode
+		},
+		{
+			label: "Bubble Babble Decode",
+			detail: "Bubble Babble 解密",
+			target: basic.bubbleDecode
+		},
+		{
+			label: "Bubble Babble Encode",
+			detail: "Bubble Babble 加密",
+			target: basic.bubbleEncode
+		},
+		{
+			label: "Brainfuck Decode",
+			detail: "Brainfuck 解密",
+			target: basic.brainfuckDecode
+		},
+		{
+			label: "Number To String",
+			detail: "整型转字符",
+			target: basic.number2string
+		},
+		{
+			label: "String To Number",
+			detail: "字符转整型",
+			target: basic.string2number
+		},
+		{
+			label: "String To Hex",
+			detail: "字符转十六进制",
+			target: basic.string2hex
+		},
+		{
+			label: "Hex To String",
+			detail: "十六进制转字符",
+			target: basic.hex2string
+		},
+		{
+			label: "String To Bin",
+			detail: "字符转二进制",
+			target: basic.string2bin
+		},
+		{
+			label: "Bin To String",
+			detail: "二进制转字符",
+			target: basic.bin2string
+		}
 		], {
 			placeHolder: '选择一种算法'
 		});
@@ -481,80 +481,80 @@ exports.activate = context => {
 		selection = editor.selection;
 		let text = editor.document.getText(selection).trim();
 		let algorithm = await vscode.window.showQuickPick([{
-				label: "Crack Hash",
-				detail: "破解选中的哈希值",
-				target: crackHash
-			},
-			{
-				label: "Crack Hashes In File",
-				detail: "破解当前文件中所有的哈希值",
-				target: crackHashInFile
-			},
-			{
-				label: "Symmetric Decryption",
-				detail: "对称密码解密算法，密文格式为Base64",
-				target: symmetricCryption
-			},
-			{
-				label: "Symmetric Encryption",
-				detail: "对称密码加密算法，密文格式为Base64",
-				target: symmetricCryption
-			},
-			{
-				label: "RSA Decryption",
-				detail: "使用公钥或私钥文件进行RSA解密",
-				target: rsaCryption
-			},
-			{
-				label: "RSA Encryption",
-				detail: "使用公钥或私钥文件进行RSA加密",
-				target: rsaCryption
-			},
-			{
-				label: "Caesar Cipher",
-				detail: "凯撒密码",
-				target: Caesar
-			},
-			{
-				label: "Character Offset",
-				detail: "字符位移",
-				target: Shift
-			},
-			{
-				label: "Fence Decode",
-				detail: "栅栏密码解密",
-				target: Fence
-			},
-			{
-				label: "Fence Encode",
-				detail: "栅栏密码加密",
-				target: Fence
-			},
-			{
-				label: "Vigenere Encode",
-				detail: "维基尼亚加密",
-				target: Vigenere
-			},
-			{
-				label: "Vigenere Decode",
-				detail: "维基尼亚解密",
-				target: Vigenere
-			},
-			{
-				label: "Vigenere Decode with No Key",
-				detail: "维基尼亚无秘钥解密",
-				target: vigenereAutoDecode
-			},
-			{
-				label: "Morse Encode",
-				detail: "摩斯密码加密",
-				target: Morse
-			},
-			{
-				label: "Morse Decode",
-				detail: "摩斯密码解密",
-				target: Morse
-			}
+			label: "Crack Hash",
+			detail: "破解选中的哈希值",
+			target: crackHash
+		},
+		{
+			label: "Crack Hashes In File",
+			detail: "破解当前文件中所有的哈希值",
+			target: crackHashInFile
+		},
+		{
+			label: "Symmetric Decryption",
+			detail: "对称密码解密算法，密文格式为Base64",
+			target: symmetricCryption
+		},
+		{
+			label: "Symmetric Encryption",
+			detail: "对称密码加密算法，密文格式为Base64",
+			target: symmetricCryption
+		},
+		{
+			label: "RSA Decryption",
+			detail: "使用公钥或私钥文件进行RSA解密",
+			target: rsaCryption
+		},
+		{
+			label: "RSA Encryption",
+			detail: "使用公钥或私钥文件进行RSA加密",
+			target: rsaCryption
+		},
+		{
+			label: "Caesar Cipher",
+			detail: "凯撒密码",
+			target: Caesar
+		},
+		{
+			label: "Character Offset",
+			detail: "字符位移",
+			target: Shift
+		},
+		{
+			label: "Fence Decode",
+			detail: "栅栏密码解密",
+			target: Fence
+		},
+		{
+			label: "Fence Encode",
+			detail: "栅栏密码加密",
+			target: Fence
+		},
+		{
+			label: "Vigenere Encode",
+			detail: "维基尼亚加密",
+			target: Vigenere
+		},
+		{
+			label: "Vigenere Decode",
+			detail: "维基尼亚解密",
+			target: Vigenere
+		},
+		{
+			label: "Vigenere Decode with No Key",
+			detail: "维基尼亚无秘钥解密",
+			target: vigenereAutoDecode
+		},
+		{
+			label: "Morse Encode",
+			detail: "摩斯密码加密",
+			target: Morse
+		},
+		{
+			label: "Morse Decode",
+			detail: "摩斯密码解密",
+			target: Morse
+		}
 		], {
 			placeHolder: '选择一种算法'
 		});
@@ -569,60 +569,60 @@ exports.activate = context => {
 		selection = editor.selection;
 		let text = editor.document.getText(selection).trim();
 		let algorithm = await vscode.window.showQuickPick([{
-				label: "Reverse String",
-				detail: "字符串逆转",
-				target: manip.reverseString
-			},
-			{
-				label: "Upper Case",
-				detail: "全部大写",
-				target: manip.upperString
-			},
-			{
-				label: "Lower Case",
-				detail: "全部小写",
-				target: manip.lowerString
-			},
-			{
-				label: "Strip String",
-				detail: "去除左右空格、换行",
-				target: manip.stripString
-			},
-			{
-				label: "Space To None",
-				detail: "去除所有空格",
-				target: manip.space2None
-			},
-			{
-				label: "Space To Line",
-				detail: "空格转换行",
-				target: manip.space2Line
-			},
-			{
-				label: "Convert Path",
-				detail: "\\和/互转",
-				target: manip.convPath
-			},
-			{
-				label: "Title Case",
-				detail: "所有词首字母大写",
-				target: manip.titleCase
-			},
-			{
-				label: "String Lenght",
-				detail: "获取文本长度",
-				target: manip.stringLen
-			},
-			{
-				label: "Add Quot By Comma",
-				detail: "为每个以逗号分隔的词加上双引号",
-				target: manip.addQuotByComma
-			},
-			{
-				label: "Add Quot By Space",
-				detail: "为每个以空格分隔的词加上双引号",
-				target: manip.addQuotBySpace
-			}
+			label: "Reverse String",
+			detail: "字符串逆转",
+			target: manip.reverseString
+		},
+		{
+			label: "Upper Case",
+			detail: "全部大写",
+			target: manip.upperString
+		},
+		{
+			label: "Lower Case",
+			detail: "全部小写",
+			target: manip.lowerString
+		},
+		{
+			label: "Strip String",
+			detail: "去除左右空格、换行",
+			target: manip.stripString
+		},
+		{
+			label: "Space To None",
+			detail: "去除所有空格",
+			target: manip.space2None
+		},
+		{
+			label: "Space To Line",
+			detail: "空格转换行",
+			target: manip.space2Line
+		},
+		{
+			label: "Convert Path",
+			detail: "\\和/互转",
+			target: manip.convPath
+		},
+		{
+			label: "Title Case",
+			detail: "所有词首字母大写",
+			target: manip.titleCase
+		},
+		{
+			label: "String Lenght",
+			detail: "获取文本长度",
+			target: manip.stringLen
+		},
+		{
+			label: "Add Quot By Comma",
+			detail: "为每个以逗号分隔的词加上双引号",
+			target: manip.addQuotByComma
+		},
+		{
+			label: "Add Quot By Space",
+			detail: "为每个以空格分隔的词加上双引号",
+			target: manip.addQuotBySpace
+		}
 		], {
 			placeHolder: '选择一种处理方案'
 		});
@@ -654,9 +654,9 @@ exports.activate = context => {
 			console.log(New);
 			fs.writeFileSync(langFile, New);
 			if (lang) {
-				print("语法文件已整合，请重启编辑器！")
+				print("语法文件已整合，请重启编辑器！");
 			} else {
-				print("未发现冲突的文件！")
+				print("未发现冲突的文件！");
 			}
 		}
 
